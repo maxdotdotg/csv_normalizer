@@ -1,46 +1,82 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import csv
 from datetime import datetime
 import dateutil.parser
+from dateutil import tz
 import sys
 import time
 
 
 def time_converter(time_in):
-    # ISO-8601 format - 2008-09-15T15:53:00
+    # convert to ISO-8601 format ex: 2008-09-15T15:53:00
     # convert from pst to est
-    # 12/31/16 11:59:59 PM
-    datetime_obj = datetime.strptime(time_in, "%m/%d/%y %I:%M:%f %p").strftime("%Y-%m-%dT%H:%M:%f")
+    tz_from = tz.gettz('America/Los_Angeles')
+    tz_to = tz.gettz('America/New_York')
+
+    datetime_obj = datetime.strptime(time_in, "%m/%d/%y %I:%M:%f %p")\
+            .replace(tzinfo=tz_from).astimezone(tz_to)\
+            .strftime("%Y-%m-%dT%H:%M:%f")
+
     return datetime_obj
 
 def zipcode(zip_in):
     # All ZIP codes should be formatted as 5 digits. 
     # If there are less than 5 digits, assume 0 as the prefix.
+    clean_zip = "{:05d}".format(int(zip_in))
+
+    return clean_zip
 
 def name(name_in):
     # The FullName column should be converted to uppercase. 
     # There will be non-English names.
+    return name_in.upper()
 
 def address(address_in):
     #  Unicode validation. 
     # there are commas in the Address field
     # your CSV parsing will need to take that into account. Commas will only be present inside a quoted string.
+    return address_in
 
 def duration(duration_in):
     # HH:MM:SS.MS format (where MS is milliseconds); 
     # convert to total number of seconds expressed as float
     # You should not round the result.
 
-def total_duration(total_in):
+    # still not working
+    try:
+        duration = datetime.strptime(duration_in, "%H:%M:%S.%f")\
+                .timestamp() * -1000
+        return duration
+    except ValueError as e:
+        return "ERROR, bad input"
+
+def total_duration(dur1, dur2):
     # sum of FooDuration and BarDuration
+    try:
+        total = duration(dur1) + duration(dur2)
+        return total
+    except TypeError:
+        return "ERR bad input"
 
 def notes(notes_in):
     # If there are invalid UTF-8 characters, please replace them with the Unicode Replacement Character.
-    pass
+    return notes_in
 
 
 # read in csv
-for row in csv.reader(iter(sys.stdin.readline, '')):
+for row in csv.reader(iter(sys.stdin.readline, ''), skipinitialspace=True):
     if "FooDuration" not in row:
-        print(time_converter(row[0]))
+        print(
+                time_converter(row[0]),
+                address(row[1]),
+                zipcode(row[2]),
+                name(row[3]),
+                duration(row[4]),
+                duration(row[5]),
+                total_duration(row[4],row[5]),
+                notes(row[6]),
+                sep=","
+                )
+    else:
+        print(",".join(row))
