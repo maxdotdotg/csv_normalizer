@@ -1,5 +1,5 @@
 # normalizer
-Python script to normalize data from a csv for further analysis/processing/prodding.
+A Python 3 script to normalize data from a csv for further analysis/processing/prodding.
 
 Goals:
 * The entire CSV is in the UTF-8 character set.
@@ -27,4 +27,5 @@ Goals:
   Character.
 
 ## Usage
-`./normalizer < test.csv`
+1. Install dependencies: `pip install -r requirements.txt`
+2. run it: `./normalizer < test.csv`
