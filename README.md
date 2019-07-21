@@ -27,4 +27,4 @@ Goals:
   Character.
 
 ## Usage
-`./normalizer < sample.csv`
+`./normalizer < test.csv`
