@@ -5,7 +5,6 @@ from datetime import datetime
 import dateutil.parser
 from dateutil import tz
 import sys
-import time
 
 
 def time_converter(time_in):
