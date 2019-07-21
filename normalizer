@@ -43,21 +43,22 @@ def duration(duration_in):
     # convert to total number of seconds expressed as float
     # You should not round the result.
 
-    # still not working
+    # still not working, figure out how to deal with hours > 24
     try:
         duration = datetime.strptime(duration_in, "%H:%M:%S.%f")\
                 .timestamp() * -1000
         return duration
     except ValueError as e:
-        return "ERROR, bad input"
+        return "ERROR!!"
 
 def total_duration(dur1, dur2):
     # sum of FooDuration and BarDuration
+    # also not working, relies on duration fn
     try:
         total = duration(dur1) + duration(dur2)
         return total
     except TypeError:
-        return "ERR bad input"
+        return "ERROR!!"
 
 def notes(notes_in):
     # If there are invalid UTF-8 characters, please replace them with the Unicode Replacement Character.
@@ -65,18 +66,23 @@ def notes(notes_in):
 
 
 # read in csv
-for row in csv.reader(iter(sys.stdin.readline, ''), skipinitialspace=True):
-    if "FooDuration" not in row:
-        print(
-                time_converter(row[0]),
-                address(row[1]),
-                zipcode(row[2]),
-                name(row[3]),
-                duration(row[4]),
-                duration(row[5]),
-                total_duration(row[4],row[5]),
-                notes(row[6]),
-                sep=","
-                )
-    else:
-        print(",".join(row))
+try:
+    for row in csv.reader(iter(sys.stdin.readline, ''), skipinitialspace=True):
+        if "FooDuration" not in row:
+            print(
+                    time_converter(row[0]),
+                    address(row[1]),
+                    zipcode(row[2]),
+                    name(row[3]),
+                    duration(row[4]),
+                    duration(row[5]),
+                    total_duration(row[4],row[5]),
+                    notes(row[7]),
+                    sep=","
+                    )
+        else:
+            print(",".join(row))
+except UnicodeDecodeError as e:
+    print("malformed input")
+    print(e)
+    sys.exit(1)
