@@ -1,15 +1,18 @@
 #!/usr/bin/env python
 
 import csv
+from datetime import datetime
+import dateutil.parser
 import sys
 import time
 
-for row in csv.reader(iter(sys.stdin.readline, '')):
-    print(row)
 
 def time_converter(time_in):
-    # ISO-8601 format
+    # ISO-8601 format - 2008-09-15T15:53:00
     # convert from pst to est
+    # 12/31/16 11:59:59 PM
+    datetime_obj = datetime.strptime(time_in, "%m/%d/%y %I:%M:%f %p").strftime("%Y-%m-%dT%H:%M:%f")
+    return datetime_obj
 
 def zipcode(zip_in):
     # All ZIP codes should be formatted as 5 digits. 
@@ -34,3 +37,10 @@ def total_duration(total_in):
 
 def notes(notes_in):
     # If there are invalid UTF-8 characters, please replace them with the Unicode Replacement Character.
+    pass
+
+
+# read in csv
+for row in csv.reader(iter(sys.stdin.readline, '')):
+    if "FooDuration" not in row:
+        print(time_converter(row[0]))
